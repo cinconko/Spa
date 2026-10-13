@@ -1,0 +1,1300 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0d0d">
+<meta name="description" content="Servis, opravy, zazimování a stavby vestavěných vířivek a bazénů v Praze a Středočeském kraji.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d0d0d'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%237fd6f2'/%3E%3C/svg%3E">
+<title>SpaAquaServis</title>
+<style>
+  /* Monochrome editorial look: black and warm paper sections alternate, oversized uppercase
+     headings with stepped line indents, numbered sections, one aqua accent taken from the hero photo. */
+  :root{
+    --ink:#0d0d0d;
+    --ink-2:#161616;
+    --card:#1c1c1c;
+    --paper:#f3f0ec;
+    --paper-2:#e8e3dd;
+    --white:#ffffff;
+    --mute:#6a6661;
+    --mute-d:#a29f9b;
+    --line:rgba(13,13,13,0.14);
+    --line-d:rgba(255,255,255,0.14);
+    --aqua:#7fd6f2;
+    --sand:#d8c3a2;
+    --err:#e2574c;
+    --font:"Inter","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --pad:clamp(16px,4vw,56px);
+    --r:18px;
+    color-scheme:light;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+  @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+  body{ margin:0; background:var(--paper); color:var(--ink); font:400 1rem/1.55 var(--font); -webkit-font-smoothing:antialiased; }
+  img{ max-width:100%; display:block; }
+  a{ color:inherit; }
+  p{ margin:0; }
+  h1,h2,h3{ margin:0; font-weight:700; }
+  [hidden]{ display:none !important; }
+  :focus-visible{ outline:2px solid var(--aqua); outline-offset:3px; }
+  .sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+  .skip{ position:absolute; left:16px; top:-60px; z-index:100; background:var(--white); color:var(--ink); padding:10px 16px; border-radius:999px; }
+  .skip:focus{ top:12px; }
+  .num{ font-variant-numeric:tabular-nums; }
+  section[id]{ scroll-margin-top:72px; }
+
+  .wrap{ max-width:1440px; margin:0 auto; padding-inline:var(--pad); }
+  .sec{ padding-block:clamp(64px,9vw,128px); }
+  .dark{ background:var(--ink); color:var(--white); }
+  .light{ background:var(--paper); color:var(--ink); }
+
+  /* Headings: uppercase, tight, lines stepped inward */
+  .big{ font-size:clamp(2.6rem,6.6vw,6rem); line-height:.94; letter-spacing:-0.045em; text-transform:uppercase; }
+  .big span{ display:block; }
+  .big .i1{ padding-left:1.1em; }
+  .big .i2{ padding-left:2.2em; }
+  @media (max-width:560px){ .big .i1{ padding-left:.6em; } .big .i2{ padding-left:1.2em; } }
+  .sec-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:24px; }
+  .sec-no{ font-size:clamp(2rem,4vw,3.6rem); font-weight:700; letter-spacing:-0.04em; line-height:1; flex:none; }
+  .sec-intro{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:24px clamp(24px,6vw,96px); margin-top:clamp(24px,3vw,40px); align-items:end; }
+  @media (max-width:820px){ .sec-intro{ grid-template-columns:1fr; } }
+  .lead{ font-size:clamp(1.05rem,1.3vw,1.2rem); max-width:44ch; }
+  .light .lead{ color:var(--mute); }
+  .dark .lead{ color:var(--mute-d); }
+  .eyebrow{ font-size:.8rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+
+  /* Pills */
+  .pill{ display:inline-flex; align-items:center; gap:12px; min-height:48px; padding:0 8px 0 22px; border-radius:999px; border:1px solid transparent;
+    font:700 .85rem/1 var(--font); letter-spacing:.06em; text-transform:uppercase; text-decoration:none; cursor:pointer; white-space:nowrap;
+    transition:transform .12s ease-out, background-color .2s, color .2s; touch-action:manipulation; }
+  .pill:active{ transform:scale(.97); }
+  .pill .dot{ width:34px; height:34px; border-radius:50%; display:grid; place-items:center; flex:none; transition:transform .25s; }
+  .pill:hover .dot{ transform:rotate(-45deg); }
+  .pill-white{ background:var(--white); color:var(--ink); }
+  .pill-white .dot{ background:var(--ink); color:var(--white); }
+  .pill-black{ background:var(--ink); color:var(--white); }
+  .pill-black .dot{ background:var(--white); color:var(--ink); }
+  .pill-sand{ background:var(--sand); color:var(--ink); }
+  .pill-sand .dot{ background:var(--ink); color:var(--sand); }
+  .pill-line{ padding:0 22px; border-color:currentColor; background:transparent; }
+  .pill[disabled]{ opacity:.6; cursor:default; }
+
+  /* Photos: full colour, gentle zoom on hover */
+  .bw{ transition:transform .7s cubic-bezier(.2,.8,.2,1); }
+
+  /* Nav */
+  .nav{ position:fixed; inset:0 0 auto; z-index:60; color:var(--white); transition:background-color .3s, backdrop-filter .3s; }
+  .nav.solid{ background:rgba(13,13,13,0.82); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
+  .nav-in{ display:flex; align-items:center; justify-content:space-between; gap:20px; min-height:72px; }
+  .logo{ display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:-0.02em; text-decoration:none; font-size:1.05rem; text-transform:uppercase; }
+  .logo i{ width:22px; height:22px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #e6f8ff, var(--aqua) 55%, #2b7ea0); }
+  .nav-links{ display:flex; gap:clamp(12px,2vw,28px); }
+  .nav-links a{ text-decoration:none; font-size:.8rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; opacity:.75; transition:opacity .2s; }
+  .nav-links a:hover{ opacity:1; }
+  .nav-r{ display:flex; align-items:center; gap:16px; }
+  .nav-tel{ font-weight:700; font-size:.9rem; text-decoration:none; white-space:nowrap; }
+  .nav .pill{ min-height:40px; padding:0 18px; }
+  @media (max-width:1000px){ .nav-links{ display:none; } }
+  @media (max-width:520px){ .nav-tel{ display:none; } }
+
+  /* Hero */
+  .hero{ position:relative; min-height:max(640px,100svh); display:flex; flex-direction:column; justify-content:flex-end; color:var(--white); overflow:hidden; background:var(--ink); }
+  .hero-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scale(1.04); animation:heroIn 2.4s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes heroIn{ from{ transform:scale(1.14); opacity:.4; } }
+  .hero::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.1) 30%, rgba(0,0,0,.25) 55%, rgba(0,0,0,.88) 100%); }
+  .hero-in{ position:relative; z-index:1; padding-top:120px; padding-bottom:clamp(20px,3vw,36px); display:grid; gap:clamp(24px,3vw,40px); }
+  .wordmark{ font-size:clamp(4rem,15vw,15rem); line-height:.84; letter-spacing:-0.06em; text-transform:uppercase; font-weight:800; }
+  .wordmark span{ display:block; }
+  .wordmark .i1{ padding-left:.9em; }
+  .hero-row{ display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; }
+  .hero-txt{ max-width:36ch; font-size:clamp(1rem,1.2vw,1.15rem); color:#e9e6e2; }
+  .hero-txt b{ display:block; font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; color:var(--white); margin-bottom:8px; }
+  .hero-ctas{ display:flex; gap:10px; flex-wrap:wrap; }
+  .hero-facts{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+  @media (max-width:1000px){ .hero-facts{ grid-template-columns:minmax(0,1fr); } }
+  .hero, .hero-in{ min-width:0; width:100%; }
+  .hero-in{ grid-template-columns:minmax(0,1fr); }
+  .fact{ min-width:0; padding:16px 18px; border-radius:var(--r); background:rgba(20,20,20,.55); border:1px solid rgba(255,255,255,.14); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+  .fact span{ font-size:.8rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--mute-d); flex:none; }
+  .fact b{ min-width:0; font-size:1.35rem; letter-spacing:-0.02em; text-align:right; overflow-wrap:anywhere; }
+  @media (max-width:360px){ .nav .pill{ display:none; } }
+  @media (max-width:420px){
+    .logo{ font-size:.9rem; gap:8px; }
+    .logo i{ width:18px; height:18px; }
+    .nav .pill{ min-height:36px; padding:0 12px; font-size:.7rem; }
+    .fact span{ font-size:.7rem; }
+    .fact b{ font-size:1.15rem; }
+  }
+
+  /* Services: project-style cards */
+  .svc-grid{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:clamp(10px,1.2vw,16px); margin-top:clamp(40px,5vw,64px); }
+  @media (max-width:1100px){ .svc-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
+  @media (max-width:700px){ .svc-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media (max-width:420px){ .svc-grid{ grid-template-columns:1fr; } }
+  .svc{ display:grid; gap:10px; text-decoration:none; align-content:start; }
+  .svc h3{ font-size:.85rem; letter-spacing:.06em; text-transform:uppercase; text-align:center; }
+  .svc .frame{ border-radius:var(--r); overflow:hidden; aspect-ratio:4/5; background:var(--paper-2); }
+  .svc .frame img{ width:100%; height:100%; object-fit:cover; }
+  @media (hover:hover){ .svc:hover .frame img{ transform:scale(1.04); } }
+  .svc.tall .frame{ aspect-ratio:auto; height:100%; min-height:100%; }
+  .spec{ display:grid; gap:0; font-size:.9rem; }
+  .spec div{ display:flex; justify-content:space-between; gap:12px; padding:7px 0; border-top:1px solid var(--line); }
+  .spec dt{ font-weight:700; }
+  .spec dd{ margin:0; color:var(--mute); text-align:right; }
+  .spec dl{ margin:0; }
+  .b2b{ margin-top:clamp(16px,2vw,24px); border-radius:var(--r); background:var(--ink); color:var(--white); padding:clamp(22px,3vw,36px); display:flex; justify-content:space-between; align-items:center; gap:20px 40px; flex-wrap:wrap; }
+  .b2b h3{ font-size:clamp(1.5rem,2.4vw,2.2rem); letter-spacing:-0.03em; text-transform:uppercase; line-height:1; }
+  .b2b p{ color:var(--mute-d); margin-top:8px; max-width:52ch; }
+
+  /* Giant wordmark band */
+  .band{ padding-top:clamp(56px,7vw,96px); }
+  .band p{ text-align:center; font-weight:700; font-size:.85rem; letter-spacing:.08em; text-transform:uppercase; margin-bottom:clamp(8px,1vw,16px); }
+  .band svg{ display:block; width:100%; height:auto; }
+  .band text{ font:800 160px var(--font); letter-spacing:-8px; fill:currentColor; }
+
+  /* Pricing */
+  .price{ display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); gap:clamp(32px,6vw,96px); margin-top:clamp(40px,5vw,72px); align-items:start; }
+  @media (max-width:960px){ .price{ grid-template-columns:1fr; } }
+  .stats{ list-style:none; margin:0; padding:0; display:grid; }
+  .stats li{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:6px 28px; align-items:baseline; padding:22px 0; border-top:1px solid var(--line-d); }
+  .stats li:last-child{ border-bottom:1px solid var(--line-d); }
+  .stats b{ font-size:clamp(2.6rem,5vw,4.4rem); line-height:1; letter-spacing:-0.05em; width:5.4ch; white-space:nowrap; }
+  @media (max-width:560px){ .stats li{ grid-template-columns:1fr; } .stats b{ width:auto; } }
+  .stats span{ font-weight:700; letter-spacing:.06em; text-transform:uppercase; font-size:.9rem; }
+  .stats small{ display:block; color:var(--mute-d); font-size:.95rem; letter-spacing:0; text-transform:none; font-weight:400; margin-top:4px; }
+  .calc{ border-radius:24px; background:var(--card); border:1px solid var(--line-d); padding:clamp(20px,3vw,36px); display:grid; gap:24px; }
+  .calc-top{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+  .calc h3{ font-size:1.4rem; letter-spacing:-0.02em; text-transform:uppercase; }
+  .switch{ display:inline-flex; align-items:center; gap:10px; border:none; background:none; color:var(--mute-d); font:600 .95rem var(--font); cursor:pointer; padding:6px 0; }
+  .switch i{ position:relative; width:44px; height:26px; border-radius:999px; background:#333; transition:background-color .2s; }
+  .switch i::after{ content:""; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:var(--white); transition:transform .25s cubic-bezier(.2,.8,.2,1); }
+  .switch[aria-checked="true"] i{ background:var(--aqua); }
+  .switch[aria-checked="true"] i::after{ transform:translateX(18px); }
+  fieldset{ border:none; margin:0; padding:0; min-width:0; }
+  legend{ padding:0; margin-bottom:12px; }
+  .picks{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+  @media (max-width:560px){ .picks{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  .pick{ position:relative; cursor:pointer; }
+  .pick input{ position:absolute; opacity:0; pointer-events:none; }
+  .pick span{ display:grid; gap:2px; height:100%; padding:12px 14px; border-radius:14px; border:1px solid var(--line-d); transition:background-color .2s, color .2s, border-color .2s; }
+  .pick b{ font-size:.95rem; line-height:1.2; }
+  .pick small{ color:var(--mute-d); font-size:.9rem; }
+  .pick:hover span{ border-color:rgba(255,255,255,.4); }
+  .pick input:checked + span{ background:var(--white); color:var(--ink); border-color:var(--white); }
+  .pick input:checked + span small{ color:var(--mute); }
+  .pick input:focus-visible + span{ outline:2px solid var(--aqua); outline-offset:2px; }
+  .range-head{ display:flex; justify-content:space-between; font-weight:700; margin-bottom:8px; }
+  .range-head output{ color:var(--aqua); }
+  input[type=range]{ width:100%; accent-color:var(--aqua); height:28px; }
+  .map-link{ display:inline-block; margin-top:6px; color:var(--mute-d); font-size:.95rem; }
+  .bd{ list-style:none; margin:0; padding:0; display:grid; gap:6px; color:var(--mute-d); }
+  .bd li{ display:flex; justify-content:space-between; gap:12px; }
+  .total{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; padding-top:18px; border-top:1px solid var(--line-d); }
+  .total span{ font-weight:700; letter-spacing:.06em; text-transform:uppercase; font-size:.85rem; }
+  .total b{ font-size:clamp(2.2rem,4vw,3.2rem); letter-spacing:-0.05em; line-height:1; }
+  .note{ color:var(--mute-d); font-size:.95rem; }
+
+  /* Season */
+  .seg{ position:relative; display:inline-grid; grid-template-columns:1fr 1fr; padding:4px; border-radius:999px; background:var(--white); border:1px solid var(--line); }
+  .seg-thumb{ position:absolute; top:4px; bottom:4px; left:4px; width:calc(50% - 4px); border-radius:999px; background:var(--ink); transition:transform .45s cubic-bezier(.3,1.3,.5,1); }
+  .seg[data-pos="1"] .seg-thumb{ transform:translateX(100%); }
+  .seg button{ position:relative; z-index:1; border:none; background:none; min-height:46px; padding:0 24px; font:700 .85rem var(--font); letter-spacing:.06em; text-transform:uppercase; color:var(--ink); cursor:pointer; transition:color .25s; }
+  .seg button[aria-selected="true"]{ color:var(--white); }
+  .season-ctl{ display:flex; align-items:center; gap:16px 24px; flex-wrap:wrap; margin-top:clamp(28px,3vw,40px); }
+  .when{ font-weight:700; }
+
+  /* Area map */
+  /* Season: frost / open water fills the whole section, the technology diagram sits on a white card */
+  #sezona{ overflow:hidden; background:var(--paper); }
+  #sezona::before{ z-index:2; }
+  .season-bg{ position:absolute; inset:0; width:100%; height:100%; display:block; z-index:0; }
+  #sezona .wrap{ position:relative; z-index:1; }
+  .season-grid{ display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,1.3fr); gap:clamp(28px,5vw,72px); margin-top:clamp(28px,3vw,48px); align-items:start; }
+  @media (max-width:960px){ .season-grid{ grid-template-columns:1fr; } }
+  .season-l{ display:grid; gap:20px; justify-items:start; }
+  .seg-row{ display:flex; align-items:center; gap:14px 18px; flex-wrap:wrap; }
+  .seg-hint{ display:inline-flex; align-items:center; gap:8px; font-weight:700; font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; }
+  .seg-hint svg{ animation:hintNudge 1.4s ease-in-out infinite; }
+  .seg.nudge::after{ content:""; position:absolute; inset:-4px; border-radius:999px; border:2px solid var(--ink); pointer-events:none; animation:segRing 2.2s ease-out infinite; }
+  .seg.nudge[data-pos="1"] .seg-thumb{ animation:thumbNudge1 2.2s ease-in-out infinite; }
+  .seg.nudge[data-pos="0"] .seg-thumb{ animation:thumbNudge0 2.2s ease-in-out infinite; }
+  @keyframes segRing{ 0%{ transform:scale(1); opacity:.7; } 70%,100%{ transform:scale(1.1,1.4); opacity:0; } }
+  @keyframes thumbNudge1{ 0%,55%,100%{ transform:translateX(100%); } 70%{ transform:translateX(80%); } 85%{ transform:translateX(100%); } }
+  @keyframes thumbNudge0{ 0%,55%,100%{ transform:translateX(0); } 70%{ transform:translateX(20%); } 85%{ transform:translateX(0); } }
+  @keyframes hintNudge{ 50%{ transform:translateX(-6px); } }
+  @media (max-width:560px){ .seg-hint svg{ display:none; } }
+  @media (prefers-reduced-motion: reduce){ .seg.nudge::after, .seg.nudge .seg-thumb, .seg-hint svg{ animation:none !important; } }
+  .rig-card{ --mid:#0d0d0d; --deep:var(--ink); --ink-soft:var(--mute); --body:var(--font); --display:var(--font);
+    border-radius:24px; padding:clamp(14px,2vw,24px); display:grid; gap:16px; color:var(--ink);
+    background:var(--white); border:1px solid var(--line); box-shadow:0 28px 60px -40px rgba(0,0,0,.45); }
+  .rig-svg{ display:block; width:100%; height:auto; }
+  .rig-floor{ stroke:var(--line); stroke-width:2; }
+  .rig-shell{ fill:#fff; stroke:#cfcac4; stroke-width:2; }
+  .rig-room{ fill:#f7f4f0; stroke:#cfcac4; stroke-width:2; stroke-dasharray:7 7; }
+  .rig-room-t{ font:600 17px var(--body); fill:var(--ink-soft); }
+  .rig-box{ fill:#fff; stroke:#bdb8b2; stroke-width:2; }
+  .rig-screen{ fill:#f3f0ec; stroke:#bdb8b2; stroke-width:2; }
+  .rig-pipe{ fill:none; stroke:#ddd8d2; stroke-width:10; stroke-linecap:round; stroke-linejoin:round; transition:stroke .35s; }
+  .rig-flow{ fill:none; stroke:#fff; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:4 14; opacity:0; transition:opacity .4s; }
+  .rig-svg.flow .rig-flow{ opacity:1; animation:rigFlow .9s linear infinite; }
+  .rig-joint{ fill:#fff; stroke:#bdb8b2; stroke-width:2; }
+  .part{ transition:opacity .35s ease, filter .35s ease; }
+  .rig-svg.has-active .part:not(.on){ opacity:.36; }
+  .part.on .rig-box, .part.on .rig-shell, .part.on .rig-joint, .part.on .rig-screen{ stroke:var(--mid); stroke-width:3; }
+  .part.on .rig-pipe{ stroke:#0d0d0d; }
+  .part.on .rig-joint{ animation:jointPulse 1.3s ease-in-out infinite; }
+  .part[data-part="room"].on .rig-room{ stroke:var(--mid); stroke-dasharray:none; }
+  .rig-label{ opacity:0; transition:opacity .3s; }
+  .rig-label.on{ opacity:1; }
+  .rig-label rect{ fill:var(--deep); }
+  .rig-label text{ fill:#fff; font:600 17px var(--body); }
+  .rig-display{ font:700 20px var(--display); fill:var(--deep); }
+  .rig-display.err{ fill:#c0392b; animation:rigBlink 1.1s ease-in-out infinite; }
+  .rig-impeller{ transform-origin:420px 290px; }
+  .rig-svg.spin .rig-impeller{ animation:rigSpin .7s linear infinite; }
+  .rig-impeller path{ stroke:#8a8680; stroke-width:4; stroke-linecap:round; }
+  .rig-coil{ fill:none; stroke:#bdb8b2; stroke-width:2.5; stroke-linejoin:round; transition:stroke .35s; }
+  .part.on .rig-coil{ stroke:#0d0d0d; }
+  .rig-water{ transition:transform 1s cubic-bezier(.3,.8,.3,1); }
+  .rig-svg.cold .rig-water{ transform:translateY(104px); }
+  .rig-wave{ animation:rigWave 3s linear infinite; }
+  .rig-steam path{ fill:none; stroke:#bdb8b2; stroke-width:3; stroke-linecap:round; opacity:0; }
+  .rig-svg.steam .rig-steam path{ animation:rigSteam 2.4s ease-in-out infinite; }
+  .rig-svg.steam .rig-steam path:nth-child(2){ animation-delay:.7s; }
+  .rig-svg.steam .rig-steam path:nth-child(3){ animation-delay:1.4s; }
+  @keyframes rigFlow{ to{ stroke-dashoffset:-18; } }
+  @keyframes rigSpin{ to{ transform:rotate(360deg); } }
+  @keyframes rigWave{ to{ transform:translateX(58px); } }
+  @keyframes rigBlink{ 50%{ opacity:.25; } }
+  @keyframes jointPulse{ 50%{ stroke-width:6; } }
+  @keyframes rigSteam{ 0%{ opacity:0; transform:translateY(10px); } 40%{ opacity:.85; } 100%{ opacity:0; transform:translateY(-18px); } }
+  @media (prefers-reduced-motion: reduce){ .rig-svg *, .rig-svg{ animation:none !important; } .rig-svg.steam .rig-steam path{ opacity:.6; } }
+  .rig-steps{ list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+  .rig-steps.compact{ grid-template-columns:1fr 1fr; }
+  @media (max-width:520px){ .rig-steps.compact{ grid-template-columns:1fr; } }
+  .rig-step{ width:100%; display:flex; align-items:center; gap:14px; text-align:left; padding:12px 16px; border-radius:16px; border:1px solid var(--line); background:#fff; color:var(--ink); cursor:pointer; font:inherit; touch-action:manipulation; transition:background-color .25s, color .25s, border-color .25s, transform .1s ease-out; }
+  .rig-step:hover{ border-color:var(--ink); }
+  .rig-step:active{ transform:scale(.98); }
+  .rig-step[aria-pressed="true"]{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .rig-n{ flex:none; width:36px; height:36px; border-radius:50%; display:grid; place-items:center; background:var(--ink); color:#fff; font:700 1rem var(--font); transition:background-color .25s, color .25s; }
+  .rig-step[aria-pressed="true"] .rig-n{ background:var(--aqua); color:var(--ink); }
+  .rig-t{ display:grid; gap:2px; min-width:0; }
+  .rig-step{ position:relative; overflow:hidden; }
+  .rig-step::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:3px; background:var(--aqua); transform-origin:left; transform:scaleX(0); }
+  .rig-steps .rig-step[aria-pressed="true"]::after{ animation:stepTick 2.8s linear forwards; }
+  .rig-steps.held .rig-step::after{ display:none; }
+  .rig-steps.paused .rig-step[aria-pressed="true"]::after{ animation-play-state:paused; }
+  @keyframes stepTick{ to{ transform:scaleX(1); } }
+  .steps-hint{ display:flex; align-items:center; gap:10px; margin:0; font-weight:700; font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; }
+  .steps-hint svg{ flex:none; animation:hintDown 1.4s ease-in-out infinite; }
+  @keyframes hintDown{ 50%{ transform:translateY(4px); } }
+  @media (prefers-reduced-motion: reduce){ .rig-step::after{ display:none; } .steps-hint svg{ animation:none; } }
+  .rig-t b{ font:700 1rem/1.2 var(--font); letter-spacing:-.01em; }
+  .area{ display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,1.3fr); gap:clamp(28px,5vw,72px); margin-top:clamp(40px,5vw,64px); align-items:center; }
+  @media (max-width:960px){ .area{ grid-template-columns:1fr; } }
+  .area-l{ display:grid; gap:20px; }
+  .field{ display:grid; gap:8px; min-width:0; }
+  .field label{ font-weight:700; font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; }
+  .field input, .field select, .field textarea{ width:100%; padding:14px 16px; border-radius:14px; font:1rem var(--font); border:1px solid var(--line-d); background:#1a1a1a; color:var(--white); transition:border-color .2s; }
+  .field input::placeholder, .field textarea::placeholder{ color:#7c7975; }
+  .field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible{ outline:none; border-color:var(--aqua); }
+  .field select{ appearance:none; -webkit-appearance:none; background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%); background-position:calc(100% - 22px) 52%, calc(100% - 17px) 52%; background-size:5px 5px; background-repeat:no-repeat; padding-right:44px; }
+  .field [aria-invalid="true"]{ border-color:var(--err); }
+  .result{ border-radius:var(--r); background:var(--card); border:1px solid var(--line-d); padding:22px; display:grid; gap:4px; }
+  .r-head{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .r-town{ font-size:1.6rem; font-weight:700; letter-spacing:-0.03em; text-transform:uppercase; }
+  .chip{ font-size:.8rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:5px 12px; border-radius:999px; background:var(--aqua); color:var(--ink); }
+  .chip.out{ background:var(--sand); }
+  .r-meta{ color:var(--mute-d); }
+  .r-price{ font-size:clamp(2.4rem,4vw,3.4rem); font-weight:700; letter-spacing:-0.05em; line-height:1.05; margin-top:6px; }
+  .r-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+  .legend{ display:flex; gap:10px 22px; flex-wrap:wrap; color:var(--mute-d); }
+  .legend span{ display:inline-flex; align-items:center; gap:8px; }
+  .sw{ width:14px; height:14px; border-radius:50%; display:inline-block; }
+  .sw-in{ background:rgba(127,214,242,.3); border:2px solid var(--aqua); }
+  .sw-out{ border:2px dashed rgba(255,255,255,.4); }
+  .map{ border-radius:24px; background:var(--ink-2); border:1px solid var(--line-d); padding:clamp(6px,1vw,12px); }
+  .map svg{ display:block; width:100%; height:auto; cursor:crosshair; touch-action:manipulation; }
+  .m-ring{ fill:none; stroke:rgba(255,255,255,.18); stroke-width:1.5; stroke-dasharray:6 8; }
+  .m-ring-t{ font:600 16px var(--font); fill:#8d8a86; }
+  .m-inner{ fill:rgba(127,214,242,.12); stroke:var(--aqua); stroke-width:2; }
+  .m-river{ fill:none; stroke:#3a3a3a; stroke-width:6; stroke-linecap:round; stroke-linejoin:round; }
+  .m-river-t{ font:italic 600 15px var(--font); fill:#77736f; }
+  .m-praha{ fill:rgba(255,255,255,.04); stroke:rgba(255,255,255,.22); stroke-width:1.5; stroke-dasharray:3 4; }
+  .m-town{ cursor:pointer; }
+  .m-town circle{ fill:var(--ink); stroke:var(--white); stroke-width:2.5; transition:fill .2s; }
+  .m-town text, .m-base text, .m-dist text{ font:600 16px var(--font); fill:var(--white); paint-order:stroke; stroke:var(--ink-2); stroke-width:5px; stroke-linejoin:round; }
+  .m-town:hover circle{ fill:var(--aqua); }
+  .m-town:focus{ outline:none; }
+  .m-town:focus-visible circle{ stroke:var(--aqua); stroke-width:4; }
+  .m-town.sel circle{ fill:var(--aqua); stroke:var(--aqua); }
+  .m-town.sel text{ font-weight:800; }
+  .m-base .core{ fill:var(--aqua); stroke:var(--ink); stroke-width:3; }
+  .m-base text{ font-weight:800; fill:var(--aqua); }
+  .m-ripple{ fill:none; stroke:var(--aqua); stroke-width:2; transform-box:fill-box; transform-origin:center; opacity:0; animation:mRipple 4.2s cubic-bezier(.2,.6,.3,1) infinite; }
+  .m-ripple:nth-of-type(2){ animation-delay:1.4s; } .m-ripple:nth-of-type(3){ animation-delay:2.8s; }
+  @keyframes mRipple{ 0%{ transform:scale(.06); opacity:.8; } 100%{ transform:scale(1); opacity:0; } }
+  .m-line{ fill:none; stroke:var(--white); stroke-width:2.5; stroke-linecap:round; stroke-dasharray:2 10; animation:mDash .9s linear infinite; }
+  @keyframes mDash{ to{ stroke-dashoffset:-12; } }
+  .m-pin circle{ fill:var(--sand); stroke:var(--ink); stroke-width:2.5; }
+  .m-dist rect{ fill:var(--white); }
+  .m-dist text{ fill:var(--ink); stroke:none; }
+
+  /* Process list */
+  .proc{ display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); gap:clamp(28px,6vw,96px); align-items:start; }
+  @media (max-width:900px){ .proc{ grid-template-columns:1fr; } }
+  .steps{ list-style:none; margin:0; padding:0; counter-reset:s; }
+  .steps li{ counter-increment:s; display:grid; grid-template-columns:auto minmax(0,1fr); gap:4px 20px; padding:22px 0; border-top:1px solid var(--line); }
+  .steps li:last-child{ border-bottom:1px solid var(--line); }
+  .steps li::before{ content:"0" counter(s); grid-row:span 2; font-size:clamp(1.6rem,2.6vw,2.2rem); font-weight:700; letter-spacing:-0.04em; line-height:1; }
+  .steps b{ font-size:clamp(1.4rem,2.4vw,2rem); letter-spacing:-0.03em; text-transform:uppercase; line-height:1; }
+  .steps span{ color:var(--mute); }
+
+  /* Brands */
+  .brands{ overflow:hidden; margin-top:16px; border-block:1px solid var(--line); padding-block:22px; -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent); mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent); }
+  .brand-row{ display:flex; gap:56px; width:max-content; animation:drift 40s linear infinite; }
+  .brand-row span{ font-size:clamp(1.6rem,3vw,2.6rem); font-weight:800; letter-spacing:-0.04em; text-transform:uppercase; white-space:nowrap; color:transparent; -webkit-text-stroke:1.2px var(--ink); }
+  .brands:hover .brand-row{ animation-play-state:paused; }
+  @keyframes drift{ to{ transform:translateX(-50%); } }
+  .brands-note{ margin-top:clamp(40px,5vw,64px); font-weight:700; font-size:.85rem; letter-spacing:.08em; text-transform:uppercase; }
+
+  /* Gallery */
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; margin:clamp(28px,3vw,40px) 0 20px; }
+  .filters button{ min-height:42px; padding:0 18px; border-radius:999px; border:1px solid var(--line-d); background:transparent; color:var(--white); font:700 .8rem var(--font); letter-spacing:.06em; text-transform:uppercase; cursor:pointer; transition:background-color .2s, color .2s; }
+  .filters button:hover{ border-color:rgba(255,255,255,.5); }
+  .filters button[aria-pressed="true"]{ background:var(--white); color:var(--ink); border-color:var(--white); }
+  .tiles{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); grid-auto-flow:dense; gap:clamp(10px,1.2vw,16px); }
+  @media (max-width:1000px){ .tiles{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
+  @media (max-width:640px){ .tiles{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  .tile{ all:unset; box-sizing:border-box; position:relative; display:block; border-radius:var(--r); overflow:hidden; aspect-ratio:4/3; background:#222; cursor:zoom-in; }
+  .tile:focus-visible{ outline:2px solid var(--aqua); outline-offset:3px; }
+  .tile.big{ grid-column:span 2; grid-row:span 2; }
+  @media (max-width:640px){ .tile.big{ grid-row:span 1; } }
+  .tile img{ width:100%; height:100%; object-fit:cover; }
+  @media (hover:hover){ .tile:hover img{ transform:scale(1.04); } }
+  .tile-cap{ position:absolute; left:10px; bottom:10px; right:10px; display:flex; justify-content:space-between; gap:8px; align-items:center; padding:8px 12px; border-radius:12px; background:rgba(13,13,13,.6); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); color:var(--white); font-size:.8rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+  .tile-cap i{ font-style:normal; color:var(--mute-d); }
+  .more{ margin-top:24px; }
+  .lightbox{ border:none; padding:0; background:transparent; max-width:min(1400px,94vw); width:100%; color:var(--white); overflow:visible; }
+  .lightbox::backdrop{ background:rgba(0,0,0,.85); }
+  .lb-frame{ position:relative; border-radius:20px; overflow:hidden; background:#000; }
+  .lb-frame img{ width:100%; max-height:84vh; object-fit:contain; }
+  .lb-bar{ position:absolute; left:12px; right:12px; bottom:12px; display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 8px 8px 16px; border-radius:14px; background:rgba(13,13,13,.7); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); }
+  .lb-bar span{ font-weight:700; letter-spacing:.05em; text-transform:uppercase; font-size:.85rem; min-width:0; }
+  .lb-btns{ display:flex; gap:6px; flex:none; }
+  .lb-btns button{ width:42px; height:42px; border-radius:50%; border:1px solid var(--line-d); background:transparent; color:var(--white); font-size:1.2rem; cursor:pointer; }
+  .lb-btns button:hover{ background:rgba(255,255,255,.12); }
+
+  /* FAQ */
+  .faq{ margin-top:clamp(32px,4vw,56px); max-width:1000px; margin-left:auto; }
+  .faq details{ border-top:1px solid var(--line); }
+  .faq details:last-child{ border-bottom:1px solid var(--line); }
+  .faq summary{ list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:20px; padding:24px 0; font-size:clamp(1.2rem,2vw,1.6rem); font-weight:700; letter-spacing:-0.02em; text-transform:uppercase; }
+  .faq summary::-webkit-details-marker{ display:none; }
+  .faq summary i{ flex:none; width:40px; height:40px; border-radius:50%; background:var(--ink); color:var(--white); display:grid; place-items:center; font-style:normal; font-size:1.3rem; transition:transform .3s cubic-bezier(.2,.8,.2,1); }
+  .faq details[open] summary i{ transform:rotate(45deg); }
+  .faq details p{ padding:0 0 24px; color:var(--mute); max-width:60ch; font-size:1.1rem; }
+
+  /* Contact */
+  .contact{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(28px,5vw,72px); margin-top:clamp(40px,5vw,64px); align-items:start; }
+  @media (max-width:900px){ .contact{ grid-template-columns:1fr; } }
+  .lines{ display:grid; }
+  .line{ display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; padding:18px 0; border-top:1px solid var(--line-d); }
+  .line:last-child{ border-bottom:1px solid var(--line-d); }
+  .line small{ width:100%; color:var(--mute-d); font-size:.8rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+  .line a, .line > span{ font-size:clamp(1.2rem,2vw,1.6rem); font-weight:700; letter-spacing:-0.02em; text-decoration:none; overflow-wrap:anywhere; }
+  .copy{ min-height:32px; padding:0 14px; border-radius:999px; border:1px solid var(--line-d); background:transparent; color:var(--white); font:700 .75rem var(--font); letter-spacing:.06em; text-transform:uppercase; cursor:pointer; }
+  .copy:hover{ background:rgba(255,255,255,.1); }
+  .sister{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px; }
+  @media (max-width:520px){ .sister{ grid-template-columns:1fr; } }
+  .sister div{ padding:16px; border-radius:14px; background:var(--card); border:1px solid var(--line-d); }
+  .sister b{ display:block; }
+  .sister span{ color:var(--mute-d); font-size:.95rem; }
+  .form{ border-radius:24px; background:var(--card); border:1px solid var(--line-d); padding:clamp(20px,3vw,36px); display:grid; gap:16px; }
+  .form h3{ font-size:1.4rem; letter-spacing:-0.02em; text-transform:uppercase; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:520px){ .row2{ grid-template-columns:1fr; } }
+  .err{ color:var(--err); font-weight:600; font-size:.95rem; }
+  .consent{ display:flex; gap:12px; align-items:flex-start; color:var(--mute-d); }
+  .consent input{ margin-top:4px; width:18px; height:18px; flex:none; accent-color:var(--aqua); }
+  .hint{ color:var(--mute-d); font-size:.95rem; }
+  .done{ padding:14px 16px; border-radius:14px; border:1px solid var(--aqua); font-weight:600; }
+
+  footer{ background:var(--ink); color:var(--mute-d); padding-block:28px 40px; border-top:1px solid var(--line-d); }
+  .foot{ display:flex; justify-content:space-between; gap:12px 24px; flex-wrap:wrap; font-size:.95rem; }
+
+  /* Water touches: wavy section edges, buttons that fill like a rising pool, light shimmer over the hero */
+  .sec{ position:relative; }
+  .sec::before{ content:""; position:absolute; left:0; right:0; top:0; height:40px; pointer-events:none;
+    -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40' preserveAspectRatio='none'%3E%3Cpath d='M0 0H1200V20C1100 36 1000 36 900 20S700 4 600 20S400 36 300 20S100 4 0 20Z'/%3E%3C/svg%3E") 0 0 / 1200px 100% repeat-x;
+    mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40' preserveAspectRatio='none'%3E%3Cpath d='M0 0H1200V20C1100 36 1000 36 900 20S700 4 600 20S400 36 300 20S100 4 0 20Z'/%3E%3C/svg%3E") 0 0 / 1200px 100% repeat-x;
+    animation:wavePan 18s linear infinite; }
+  .sec.light::before{ background:var(--ink); }
+  .sec.dark::before{ background:var(--paper); }
+  @keyframes wavePan{ to{ -webkit-mask-position:1200px 0; mask-position:1200px 0; } }
+  @media (max-width:700px){ .sec::before{ height:28px; } }
+  .pill-white, .pill-sand, .pill-black, .pill-line{
+    background-image:linear-gradient(var(--aqua),var(--aqua)); background-repeat:no-repeat; background-position:0 100%; background-size:100% 0;
+    transition:transform .12s ease-out, background-size .5s cubic-bezier(.2,.8,.2,1), color .25s, border-color .25s; }
+  .pill-white:hover, .pill-sand:hover, .pill-black:hover, .pill-line:hover{ background-size:100% 100%; color:var(--ink); }
+  .pill-line:hover{ border-color:var(--aqua); }
+  .pill-black:hover .dot, .pill-white:hover .dot, .pill-sand:hover .dot{ background:var(--ink); color:var(--aqua); }
+  .hero-water{ position:absolute; inset:0; width:100%; height:100%; display:block; mix-blend-mode:screen; opacity:.6; pointer-events:none; }
+  @media (prefers-reduced-motion: reduce){ .sec::before{ animation:none; } }
+
+  /* Reveal on scroll */
+  .rv{ opacity:0; transform:translateY(24px); transition:opacity .8s ease, transform .8s cubic-bezier(.2,.8,.2,1); }
+  .rv.in{ opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){
+    .rv{ opacity:1; transform:none; transition:none; }
+    .hero-img, .brand-row, .m-ripple, .m-line, .cards.swap .card{ animation:none; }
+    .brand-row{ flex-wrap:wrap; width:auto; gap:12px 32px; }
+    .brand-row [aria-hidden]{ display:none; }
+    .m-ripple{ opacity:.25; }
+    .bw, .seg-thumb{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Přeskočit na obsah</a>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="logo" href="#main"><i aria-hidden="true"></i>SpaAquaServis</a>
+    <nav class="nav-links" aria-label="Hlavní navigace">
+      <a href="#sluzby">Služby</a>
+      <a href="#cenik">Ceník</a>
+      <a href="#sezona">Sezóna</a>
+      <a href="#oblast">Oblast</a>
+      <a href="#realizace">Realizace</a>
+      <a href="#dotazy">Dotazy</a>
+    </nav>
+    <div class="nav-r">
+      <a class="nav-tel num" href="tel:+420777267377">777&nbsp;267&nbsp;377</a>
+      <a class="pill pill-line" href="#kontakt">Poptat servis</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero" aria-labelledby="hero-h">
+    <img class="hero-img" src="img/IMG_3514.jpg" width="1600" height="1200" alt="Rozsvícená vířivka pod zastřešením za soumraku" fetchpriority="high">
+    <canvas class="hero-water" id="heroWater" aria-hidden="true"></canvas>
+    <div class="wrap hero-in">
+      <h1 class="wordmark" id="hero-h"><span>SpaAqua</span><span class="i1">Servis</span><span class="sr-only">: servis, opravy a stavby vestavěných vířivek a bazénů v Praze a Středočeském kraji</span></h1>
+      <div class="hero-row">
+        <p class="hero-txt"><b>Vířivky a bazény</b>Servis, opravy, zazimování a stavby na klíč. Praha a Středočeský kraj.</p>
+        <div class="hero-ctas">
+          <a class="pill pill-white" href="#kontakt">Poptat servis<span class="dot" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 11L11 3M5 3h6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+          <a class="pill pill-line num" href="tel:+420777267377">Zavolat 777&nbsp;267&nbsp;377</a>
+        </div>
+      </div>
+      <div class="hero-facts num">
+        <div class="fact"><span>Výjezd</span><b id="heroTrip">od 605 Kč</b></div>
+        <div class="fact"><span>Ozveme se</span><b>do 2 hodin</b></div>
+        <div class="fact"><span>Opravujeme</span><b>všechny značky</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec light" id="sluzby">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <h2 class="big"><span>Opravíme,</span><span class="i1">ochráníme,</span><span class="i2">postavíme.</span></h2>
+        <span class="sec-no" aria-hidden="true">/01</span>
+      </div>
+      <div class="sec-intro rv">
+        <p class="eyebrow">Naše služby</p>
+        <p class="lead">Vestavěné vířivky a bazény všech značek. Nafukovací ne.</p>
+      </div>
+      <div class="svc-grid">
+        <a class="svc ph rv" href="#kontakt" data-service="Servis nebo oprava vířivky">
+          <h3>Servis a opravy</h3>
+          <div class="frame"><img class="bw" src="img/t-IMG_1597.jpg" alt="" width="900" height="675" loading="lazy" decoding="async"></div>
+          <dl class="spec"><div><dt>Co</dt><dd>Čerpadla, trysky, filtrace, elektronika</dd></div><div><dt>Další krok</dt><dd>Poptat →</dd></div></dl>
+        </a>
+        <a class="svc ph rv" href="#sezona">
+          <h3>Zazimování</h3>
+          <div class="frame"><img class="bw" src="img/t-IMG_7144.jpg" alt="" width="675" height="900" loading="lazy" decoding="async"></div>
+          <dl class="spec"><div><dt>Co</dt><dd>Mráz si na technologii nepřijde</dd></div><div><dt>Další krok</dt><dd>Jak zazimujeme →</dd></div></dl>
+        </a>
+        <a class="svc ph rv" href="#kontakt" data-service="Ozónový generátor">
+          <h3>Ozón</h3>
+          <div class="frame"><img class="bw" src="img/t-IMG_3042.jpg" alt="" width="900" height="675" loading="lazy" decoding="async"></div>
+          <dl class="spec"><div><dt>Co</dt><dd>Čistá voda bez chemie</dd></div><div><dt>Další krok</dt><dd>Poptat →</dd></div></dl>
+        </a>
+        <a class="svc ph rv" href="#kontakt" data-service="Stavba na klíč">
+          <h3>Stavby na klíč</h3>
+          <div class="frame"><img class="bw" src="img/t-IMG_3630.jpg" alt="" width="900" height="675" loading="lazy" decoding="async"></div>
+          <dl class="spec"><div><dt>Co</dt><dd>Od výkopu po první koupel</dd></div><div><dt>Další krok</dt><dd>Poptat →</dd></div></dl>
+        </a>
+        <a class="svc ph rv" href="#kontakt" data-service="Servis nebo oprava vířivky">
+          <h3>Havárie</h3>
+          <div class="frame"><img class="bw" src="img/t-IMG_10982.jpg" alt="" width="675" height="900" loading="lazy" decoding="async"></div>
+          <dl class="spec"><div><dt>Co</dt><dd>Teče, nehřeje, hlásí chybu?</dd></div><div><dt>Další krok</dt><dd>Poptat →</dd></div></dl>
+        </a>
+      </div>
+      <div class="b2b rv">
+        <div>
+          <h3>Hotely a wellness</h3>
+          <p>Servisní smlouva, přednostní výjezd a technik, který váš provoz zná.</p>
+        </div>
+        <a class="pill pill-sand" href="#kontakt" data-service="Servisní smlouva pro firmu">Domluvit smlouvu<span class="dot" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 11L11 3M5 3h6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      </div>
+    </div>
+    <div class="wrap band rv" aria-hidden="true">
+      <p>Servis · Opravy · Stavby</p>
+      <svg viewBox="0 0 1000 132"><text x="0" y="118" textLength="1000" lengthAdjust="spacingAndGlyphs">SPAAQUASERVIS</text></svg>
+    </div>
+  </section>
+
+  <section class="sec dark" id="cenik">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <h2 class="big"><span>Cenu znáte</span><span class="i1">dřív, než</span><span class="i2">přijedeme.</span></h2>
+        <span class="sec-no" aria-hidden="true">/02</span>
+      </div>
+      <div class="price">
+        <ul class="stats num rv">
+          <li><b id="r-trip">605&nbsp;Kč</b><span>Výjezd do 25 km<small>Paušál za cestu tam i zpět.</small></span></li>
+          <li><b id="r-hour">678&nbsp;Kč</b><span>Hodina práce<small>Účtujeme odpracovaný čas.</small></span></li>
+          <li><b id="r-km">18&nbsp;Kč</b><span>Kilometr navíc<small>Za každý km nad 25 km.</small></span></li>
+        </ul>
+        <form class="calc rv" id="calc" aria-label="Orientační kalkulace" onsubmit="return false;">
+          <div class="calc-top">
+            <h3>Spočítejte si to</h3>
+            <button class="switch" id="vat" type="button" role="switch" aria-checked="true"><i aria-hidden="true"></i><span id="vatLabel">Včetně DPH</span></button>
+          </div>
+          <fieldset>
+            <legend class="eyebrow">Co potřebujete?</legend>
+            <div class="picks" id="picks"></div>
+          </fieldset>
+          <div>
+            <div class="range-head"><label for="km">Vzdálenost</label><output id="kmOut" for="km" class="num">20&nbsp;km</output></div>
+            <input id="km" name="km" type="range" min="5" max="120" step="5" value="20">
+            <a class="map-link" href="#oblast">Najít obec na mapě</a>
+          </div>
+          <ul class="bd num" id="bd"></ul>
+          <div class="total"><span>Celkem orientačně</span><b class="num" id="total" aria-live="polite">1&nbsp;283&nbsp;Kč</b></div>
+          <p class="note" id="calcNote">Díly a chemie zvlášť.</p>
+          <a class="pill pill-white" href="#kontakt" id="sendQuote">Poslat tuto kalkulaci<span class="dot" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 11L11 3M5 3h6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec light" id="sezona">
+    <canvas class="season-bg" id="seasonCanvas" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <div class="sec-head rv">
+        <h2 class="big"><span>Jaro,</span><span class="i1">nebo podzim?</span></h2>
+        <span class="sec-no" aria-hidden="true">/03</span>
+      </div>
+      <div class="season-grid">
+        <div class="season-l rv">
+          <p class="eyebrow">Sezónní servis</p>
+          <p class="lead">Mráz umí roztrhnout čerpadlo za jedinou noc.</p>
+          <div class="seg-row">
+          <div class="seg nudge" id="seg" role="tablist" aria-label="Sezónní servis" data-pos="1">
+            <span class="seg-thumb" aria-hidden="true"></span>
+            <button type="button" role="tab" id="tab-jaro" aria-selected="false" aria-controls="season-panel" tabindex="-1" data-key="jaro">Odzimování</button>
+            <button type="button" role="tab" id="tab-podzim" aria-selected="true" aria-controls="season-panel" data-key="podzim">Zazimování</button>
+          </div>
+          <span class="seg-hint" aria-hidden="true"><svg width="18" height="12" viewBox="0 0 18 12"><path d="M17 6H2M6 1.5L1.5 6 6 10.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Zkuste přepnout</span>
+          </div>
+          <p class="when" id="when">Ideálně září až listopad</p>
+          <a class="pill pill-black" href="#kontakt" id="seasonCta" data-service="Zazimování nebo odzimování"><span id="seasonCtaT">Objednat zazimování</span><span class="dot" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 11L11 3M5 3h6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+        </div>
+        <div class="rig-card rv" id="season-panel" role="tabpanel" aria-labelledby="tab-podzim">
+          <div class="rig" id="seasonRig"></div>
+          <p class="steps-hint" id="stepsHint" aria-hidden="true"><svg width="12" height="16" viewBox="0 0 12 16"><path d="M6 1v13M1.5 9.5L6 14l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Klikněte na krok a uvidíte, co se děje</p>
+          <ol class="rig-steps compact" id="seasonSteps"></ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec dark" id="oblast">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <h2 class="big"><span>Kam</span><span class="i1">jezdíme</span></h2>
+        <span class="sec-no" aria-hidden="true">/04</span>
+      </div>
+      <div class="area">
+        <div class="area-l rv">
+          <p class="lead">Praha a Středočeský kraj. Klikněte na mapu a uvidíte cenu výjezdu.</p>
+          <div class="field">
+            <label for="town">Vaše obec</label>
+            <input id="town" name="town" list="townList" autocomplete="address-level2" placeholder="Např. Kladno…">
+            <datalist id="townList"></datalist>
+          </div>
+          <div class="result" id="result" aria-live="polite">
+            <div class="r-head"><b class="r-town" id="rTown">Praha</b><span class="chip" id="rChip">V paušálu</span></div>
+            <span class="r-meta" id="rMeta">cca 17 km cesty</span>
+            <span class="r-price num" id="rPrice">605 Kč</span>
+            <span class="r-meta" id="rNote">výjezd, včetně DPH</span>
+            <div class="r-actions">
+              <a class="pill pill-white" href="#kontakt" id="rAsk">Poptat servis<span class="dot" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 11L11 3M5 3h6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+              <a class="pill pill-line" href="#cenik" id="rCalc">Spočítat i s prací</a>
+            </div>
+          </div>
+          <div class="legend">
+            <span><i class="sw sw-in"></i>Do 25 km cesty: paušál</span>
+            <span><i class="sw sw-out"></i>Dál: příplatek za km</span>
+          </div>
+        </div>
+        <div class="map rv">
+          <svg id="mapSvg" viewBox="0 0 800 630" role="group" aria-label="Mapa oblasti, kam jezdíme. Vyberte město nebo klikněte na mapu."></svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec light" aria-labelledby="proces-h">
+    <div class="wrap">
+      <div class="proc">
+        <div class="rv">
+          <h2 class="big" id="proces-h"><span>Čtyři kroky</span><span class="i1">k teplé</span><span class="i2">vodě</span></h2>
+        </div>
+        <ol class="steps rv">
+          <li><b>Fotka</b><span>Pošlete nám fotku závady nebo displeje.</span></li>
+          <li><b>Cena</b><span>Řekneme ji předem.</span></li>
+          <li><b>Oprava</b><span>Díly vozíme s sebou.</span></li>
+          <li><b>Klid</b><span>Ohlídáme i další sezónu.</span></li>
+        </ol>
+      </div>
+      <p class="brands-note rv">Opravujeme všechny značky, například:</p>
+      <div class="brands">
+        <div class="brand-row">
+          <span>Jacuzzi</span><span>Hot&nbsp;Spring</span><span>Caldera&nbsp;Spas</span><span>Wellis</span><span>Viskan</span><span>Canadian&nbsp;Spa</span><span>Balboa</span><span>Gecko</span>
+          <span aria-hidden="true">Jacuzzi</span><span aria-hidden="true">Hot&nbsp;Spring</span><span aria-hidden="true">Caldera&nbsp;Spas</span><span aria-hidden="true">Wellis</span><span aria-hidden="true">Viskan</span><span aria-hidden="true">Canadian&nbsp;Spa</span><span aria-hidden="true">Balboa</span><span aria-hidden="true">Gecko</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec dark" id="realizace">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <h2 class="big"><span>Naše</span><span class="i1">realizace</span></h2>
+        <span class="sec-no" aria-hidden="true">/05</span>
+      </div>
+      <div class="filters" role="group" aria-label="Filtrovat realizace">
+        <button type="button" aria-pressed="true" data-f="vse">Vše</button>
+        <button type="button" aria-pressed="false" data-f="bazen">Bazény</button>
+        <button type="button" aria-pressed="false" data-f="virivka">Vířivky</button>
+        <button type="button" aria-pressed="false" data-f="technika">Opravy a technologie</button>
+        <button type="button" aria-pressed="false" data-f="stavba">Stavby</button>
+      </div>
+      <div class="tiles" id="tiles"></div>
+      <button class="pill pill-line more" type="button" id="more">Zobrazit všechny realizace</button>
+      <dialog class="lightbox" id="lb" aria-label="Fotografie realizace">
+        <div class="lb-frame">
+          <img id="lbImg" alt="">
+          <div class="lb-bar">
+            <span id="lbCap"></span>
+            <div class="lb-btns">
+              <button type="button" id="lbPrev" aria-label="Předchozí fotka">‹</button>
+              <button type="button" id="lbNext" aria-label="Další fotka">›</button>
+              <button type="button" id="lbClose" aria-label="Zavřít">×</button>
+            </div>
+          </div>
+        </div>
+      </dialog>
+    </div>
+  </section>
+
+  <section class="sec light" id="dotazy">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <h2 class="big"><span>Časté</span><span class="i1">dotazy</span></h2>
+        <span class="sec-no" aria-hidden="true">/06</span>
+      </div>
+      <div class="faq rv">
+        <details>
+          <summary>Jak často dělat servis?<i aria-hidden="true">+</i></summary>
+          <p>Dvakrát ročně: na jaře a na podzim.</p>
+        </details>
+        <details>
+          <summary>Jak rychle přijedete?<i aria-hidden="true">+</i></summary>
+          <p>Ozveme se do dvou hodin. Havárie řešíme přednostně.</p>
+        </details>
+        <details>
+          <summary>Opravujete nafukovací vířivky?<i aria-hidden="true">+</i></summary>
+          <p>Ne. Jen vířivky a bazény se stálou technologií.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec dark" id="kontakt">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <h2 class="big"><span>Pojďme to</span><span class="i1">vyřešit.</span></h2>
+        <span class="sec-no" aria-hidden="true">/07</span>
+      </div>
+      <div class="contact">
+        <div class="rv">
+          <p class="lead">Napište, co se děje, nebo rovnou zavolejte. Ve všední den se ozveme do dvou hodin.</p>
+          <div class="lines" style="margin-top:28px">
+            <div class="line"><small>Telefon</small><a class="num" href="tel:+420777267377">+420&nbsp;777&nbsp;267&nbsp;377</a><button class="copy" type="button" data-copy="+420 777 267 377" aria-label="Kopírovat telefon">Kopírovat</button></div>
+            <div class="line"><small>E-mail</small><a href="mailto:info@servisvirivychvan.cz">info@servisvirivychvan.cz</a><button class="copy" type="button" data-copy="info@servisvirivychvan.cz" aria-label="Kopírovat e-mail">Kopírovat</button></div>
+            <div class="line"><small>Adresa</small><span>U Rybníčku 233, 252 64 Velké Přílepy</span></div>
+          </div>
+          <div class="sister">
+            <div><b>Instalatérské a topenářské práce</b><span>Vlastní web připravujeme</span></div>
+            <div><b>Zemní a výkopové práce</b><span>Vlastní web připravujeme</span></div>
+          </div>
+        </div>
+        <form class="form rv" id="form" novalidate>
+          <h3>Nezávazná poptávka</h3>
+          <div class="row2">
+            <div class="field">
+              <label for="f-name">Jméno</label>
+              <input id="f-name" name="name" autocomplete="name" placeholder="Jan Novák…">
+            </div>
+            <div class="field">
+              <label for="f-phone">Telefon</label>
+              <input id="f-phone" name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="777 123 456…" required aria-describedby="phone-err">
+              <span class="err" id="phone-err" hidden>Zadejte telefon, ať se vám můžeme ozvat.</span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-type">Co potřebujete</label>
+            <select id="f-type" name="service">
+              <option>Servis nebo oprava vířivky</option>
+              <option>Servis nebo oprava bazénu</option>
+              <option>Zazimování nebo odzimování</option>
+              <option>Ozónový generátor</option>
+              <option>Stavba na klíč</option>
+              <option>Servisní smlouva pro firmu</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-msg">Popis problému</label>
+            <textarea id="f-msg" name="message" rows="4" autocomplete="off" placeholder="Vířivka nehřeje a displej ukazuje chybu…"></textarea>
+          </div>
+          <p class="hint">Fotku závady nebo displeje můžete přiložit k e-mailu, který se otevře po odeslání.</p>
+          <label class="consent"><input id="f-consent" name="consent" type="checkbox" required><span>Souhlasím se zpracováním údajů z formuláře pro vyřízení poptávky. <a href="ochrana-osobnich-udaju.html">Zásady ochrany osobních údajů</a></span></label>
+          <div><button class="pill pill-white" type="submit" id="send">Odeslat poptávku<span class="dot" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 11L11 3M5 3h6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button></div>
+          <div class="done" id="done" role="status" hidden></div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span>© 2026 SpaAquaServis, Daniel Gatyás, IČO 07010397</span>
+    <span>Velké Přílepy, Praha-západ</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------- Nav turns solid once the hero is scrolled past ----------
+  var nav = document.getElementById('nav');
+  function navState(){ nav.classList.toggle('solid', window.scrollY > 40); }
+  window.addEventListener('scroll', navState, { passive:true }); navState();
+
+  // ---------- Reveal on scroll ----------
+  var rvEls = document.querySelectorAll('.rv');
+  if('IntersectionObserver' in window && !reduce){
+    var rio = new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); rio.unobserve(en.target); } }); }, { rootMargin:'0px 0px -8% 0px' });
+    rvEls.forEach(function(e){ rio.observe(e); });
+  } else { rvEls.forEach(function(e){ e.classList.add('in'); }); }
+
+  // ---------- Price calculator ----------
+  var CZK = new Intl.NumberFormat('cs-CZ', { style:'currency', currency:'CZK', maximumFractionDigits:0 });
+  var NUM = new Intl.NumberFormat('cs-CZ', { maximumFractionDigits:1 });
+  var RATE = { trip:500, hour:560, km:15, freeKm:25 }, VAT = 1.21, withVat = true;
+  var km = document.getElementById('km'), vatBtn = document.getElementById('vat');
+  // Typical durations and rates still need confirming by the client before launch.
+  var SERVICES = [
+    { t:'Diagnostika závady', h:[1,1], form:'Servis nebo oprava vířivky', note:'Díly podle nálezu účtujeme zvlášť.' },
+    { t:'Zazimování', h:[1.5,2.5], form:'Zazimování nebo odzimování', note:'Chemie zvlášť.' },
+    { t:'Odzimování', h:[1.5,2.5], form:'Zazimování nebo odzimování', note:'Chemie zvlášť.' },
+    { t:'Výměna čerpadla', h:[1.5,2.5], form:'Servis nebo oprava vířivky', note:'Čerpadlo účtujeme zvlášť.' },
+    { t:'Čištění potrubí', h:[1,2], form:'Servis nebo oprava vířivky', note:'Čisticí chemie zvlášť.' },
+    { t:'Ozón a UV lampa', h:[0.5,1], form:'Ozónový generátor', note:'Díly zvlášť.' }
+  ], svcPick = 0, lastQuote = '';
+  function hrsText(h){ return h[0] === h[1] ? NUM.format(h[0]) + ' h' : NUM.format(h[0]) + '–' + NUM.format(h[1]) + ' h'; }
+  var picks = document.getElementById('picks');
+  picks.innerHTML = SERVICES.map(function(s, i){
+    return '<label class="pick"><input type="radio" name="svc" value="' + i + '"' + (i === 0 ? ' checked' : '') + '><span><b>' + s.t + '</b><small>cca ' + hrsText(s.h) + '</small></span></label>';
+  }).join('');
+  picks.addEventListener('change', function(e){ if(e.target.name === 'svc'){ svcPick = +e.target.value; calc(); } });
+  function money(n){ return CZK.format(Math.round(withVat ? n*VAT : n)); }
+  function span(a, b){ return Math.round(a) === Math.round(b) ? money(a) : money(a).replace(/\s*Kč$/, '') + '–' + money(b); }
+  function calc(){
+    var k = +km.value, extra = Math.max(0, k - RATE.freeKm), s = SERVICES[svcPick];
+    var trip = RATE.trip + extra*RATE.km, w0 = s.h[0]*RATE.hour, w1 = s.h[1]*RATE.hour, total = span(trip + w0, trip + w1);
+    document.getElementById('kmOut').textContent = NUM.format(k) + ' km';
+    document.getElementById('bd').innerHTML =
+      '<li><span>Výjezd' + (extra ? ' + ' + extra + ' km' : '') + '</span><span>' + money(trip) + '</span></li>' +
+      '<li><span>Práce, ' + hrsText(s.h) + '</span><span>' + span(w0, w1) + '</span></li>';
+    document.getElementById('total').textContent = total;
+    document.getElementById('calcNote').textContent = s.note;
+    lastQuote = s.t + ', ' + k + ' km, orientačně ' + total + (withVat ? ' s DPH' : ' bez DPH');
+    document.getElementById('r-trip').textContent = money(RATE.trip);
+    document.getElementById('r-hour').textContent = money(RATE.hour);
+    document.getElementById('r-km').textContent = money(RATE.km);
+    document.getElementById('heroTrip').textContent = 'od ' + money(RATE.trip);
+    document.getElementById('vatLabel').textContent = withVat ? 'Včetně DPH' : 'Bez DPH';
+  }
+  km.addEventListener('input', calc);
+  vatBtn.addEventListener('click', function(){ withVat = !withVat; vatBtn.setAttribute('aria-checked', String(withVat)); calc(); refreshArea(); });
+  document.getElementById('sendQuote').addEventListener('click', function(){
+    document.getElementById('f-type').value = SERVICES[svcPick].form;
+    var msg = document.getElementById('f-msg');
+    msg.value = 'Kalkulace: ' + lastQuote + '. ' + msg.value.replace(/^Kalkulace:[^\n]*?\.\s/, '');
+  });
+  calc();
+
+  // ---------- Season canvas: open water in spring, frost creeping in from the edges in autumn ----------
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+  function fit(c, scale){
+    var r = c.getBoundingClientRect(), s = scale || DPR;
+    c.width = Math.max(1, Math.round(r.width * s)); c.height = Math.max(1, Math.round(r.height * s));
+    var x = c.getContext('2d'); x.setTransform(s,0,0,s,0,0); return x;
+  }
+  var sCanvas = document.getElementById('seasonCanvas'), sCtx = fit(sCanvas), crystals = [], sVis = false, sDirty = true, sDrawn = 0;
+  var frost = 0, frostV = 0, frostTarget = 0;
+  function seedCrystals(){
+    var w = sCanvas.clientWidth, h = sCanvas.clientHeight, seed = 7;
+    function rnd(){ seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    crystals = [];
+    for(var i=0;i<46;i++){
+      var edge = i % 4, p = rnd(), x, y, a;
+      if(edge === 0){ x = p*w; y = 0; a = Math.PI/2; } else if(edge === 1){ x = w; y = p*h; a = Math.PI; }
+      else if(edge === 2){ x = p*w; y = h; a = -Math.PI/2; } else { x = 0; y = p*h; a = 0; }
+      a += (rnd()-0.5)*1.1;
+      var len = 60 + rnd()*Math.min(w,h)*0.3, br = [];
+      for(var k=1;k<=4;k++){ br.push({ t:k/5, s:(rnd()>0.5?1:-1), l:len*(0.18+rnd()*0.2) }); }
+      crystals.push({ x:x, y:y, a:a, len:len, br:br });
+    }
+  }
+  seedCrystals();
+  // Paper background. Autumn: black frost spikes grow in from the edges. Spring: they retreat and faint swell lines drift.
+  function drawSeason(t){
+    var w = sCanvas.clientWidth, h = sCanvas.clientHeight, open = 1 - frost;
+    sCtx.fillStyle = '#f3f0ec'; sCtx.fillRect(0, 0, w, h);
+    if(open > 0.02){
+      sCtx.strokeStyle = 'rgba(13,13,13,' + (0.11*open).toFixed(3) + ')'; sCtx.lineWidth = 1.2;
+      for(var l=0;l<9;l++){
+        var y0 = h*(l+0.5)/9; sCtx.beginPath();
+        for(var x=0;x<=w;x+=16){
+          var y = y0 + Math.sin(x*0.012 + t*0.001 + l*1.3)*8 + Math.sin(x*0.005 - t*0.0006 + l)*6;
+          x ? sCtx.lineTo(x,y) : sCtx.moveTo(x,y);
+        }
+        sCtx.stroke();
+      }
+    }
+    if(frost < 0.01) return;
+    sCtx.strokeStyle = '#0d0d0d'; sCtx.lineCap = 'round';
+    crystals.forEach(function(c){
+      var L = c.len * frost, ex = c.x + Math.cos(c.a)*L, ey = c.y + Math.sin(c.a)*L;
+      sCtx.lineWidth = 1.8; sCtx.beginPath(); sCtx.moveTo(c.x, c.y); sCtx.lineTo(ex, ey); sCtx.stroke();
+      sCtx.lineWidth = 1.3;
+      c.br.forEach(function(b){
+        if(b.t > frost) return;
+        var bx = c.x + Math.cos(c.a)*c.len*b.t, by = c.y + Math.sin(c.a)*c.len*b.t;
+        var bl = b.l * Math.min(1, (frost - b.t)*3), ba = c.a + b.s*1.05;
+        sCtx.beginPath(); sCtx.moveTo(bx, by); sCtx.lineTo(bx + Math.cos(ba)*bl, by + Math.sin(ba)*bl); sCtx.stroke();
+        sCtx.beginPath(); sCtx.moveTo(bx, by); sCtx.lineTo(bx + Math.cos(c.a - b.s*1.05)*bl*0.6, by + Math.sin(c.a - b.s*1.05)*bl*0.6); sCtx.stroke();
+      });
+    });
+    clearUnderText();
+  }
+  // Keep the spikes off the content: repaint paper behind every text block, the tabs, the button and the card.
+  function clearUnderText(){
+    var cb = sCanvas.getBoundingClientRect();
+    sCtx.fillStyle = '#f3f0ec';
+    document.querySelectorAll('#sezona .sec-head h2, #sezona .sec-no, #sezona .season-l > *, #sezona .rig-card').forEach(function(e){
+      var r = e.getBoundingClientRect(), x = r.left - cb.left - 14, y = r.top - cb.top - 10, w = r.width + 28, h = r.height + 20, rad = 18;
+      sCtx.beginPath(); sCtx.moveTo(x + rad, y); sCtx.arcTo(x + w, y, x + w, y + h, rad); sCtx.arcTo(x + w, y + h, x, y + h, rad); sCtx.arcTo(x, y + h, x, y, rad); sCtx.arcTo(x, y, x + w, y, rad); sCtx.closePath(); sCtx.fill();
+    });
+  }
+  if('IntersectionObserver' in window){ new IntersectionObserver(function(es){ sVis = es[0].isIntersecting; }).observe(sCanvas); } else { sVis = true; }
+  // Only repaint when the frost is moving, after a resize, or (spring only) at ~25 fps for the drifting lines.
+  var sLast = 0;
+  (function seasonLoop(now){
+    var dt = Math.min(0.05, Math.max(0, (now - sLast)/1000)); sLast = now;
+    if(sVis){
+      var wv = 2*Math.PI/0.9, acc = -wv*wv*(frost-frostTarget) - 2*wv*frostV;
+      frostV += acc*dt; frost = Math.max(0, Math.min(1, frost + frostV*dt));
+      var moving = Math.abs(frost - frostTarget) > 0.002 || Math.abs(frostV) > 0.002;
+      if(!moving && frost !== frostTarget){ frost = frostTarget; frostV = 0; sDirty = true; }
+      if(moving || sDirty || (!reduce && frostTarget < 0.5 && now - sDrawn > 40)){ drawSeason(reduce ? 0 : now); sDrawn = now; sDirty = false; }
+    }
+    requestAnimationFrame(seasonLoop);
+  })(0);
+  function refitSeason(){ sCtx = fit(sCanvas); seedCrystals(); sDirty = true; }
+  if('ResizeObserver' in window){ new ResizeObserver(refitSeason).observe(sCanvas); } else { window.addEventListener('resize', refitSeason); }
+
+  // ---------- Hero shimmer: drifting caustic light, faint swell lines, ripples that follow the pointer ----------
+  var hero = document.querySelector('.hero'), hCanvas = document.getElementById('heroWater'), hCtx = fit(hCanvas), hRip = [], hVis = true, hLastRip = 0;
+  function drawHero(t){
+    var w = hCanvas.clientWidth, h = hCanvas.clientHeight;
+    hCtx.clearRect(0, 0, w, h);
+    for(var i=0;i<6;i++){
+      var cx = w*(0.5 + 0.5*Math.sin(t*0.00011*(i+1) + i*1.7)), cy = h*(0.55 + 0.4*Math.cos(t*0.00009*(i+2) + i));
+      var R = Math.max(w,h)*(0.16 + i*0.025), g = hCtx.createRadialGradient(cx,cy,0,cx,cy,R);
+      g.addColorStop(0,'rgba(150,225,245,0.22)'); g.addColorStop(1,'rgba(150,225,245,0)');
+      hCtx.fillStyle = g; hCtx.fillRect(0,0,w,h);
+    }
+    hCtx.strokeStyle = 'rgba(255,255,255,0.12)'; hCtx.lineWidth = 1;
+    for(var l=0;l<6;l++){
+      var y0 = h*(0.4 + l*0.1); hCtx.beginPath();
+      for(var x=0;x<=w;x+=14){
+        var y = y0 + Math.sin(x*0.012 + t*0.0009 + l*1.3)*6 + Math.sin(x*0.005 - t*0.0005 + l)*5;
+        x ? hCtx.lineTo(x,y) : hCtx.moveTo(x,y);
+      }
+      hCtx.stroke();
+    }
+    hRip.forEach(function(r){ r.r += 1.7; r.a -= 0.011; });
+    hRip = hRip.filter(function(r){ return r.a > 0; });
+    hRip.forEach(function(r){ hCtx.beginPath(); hCtx.arc(r.x, r.y, r.r, 0, Math.PI*2); hCtx.strokeStyle = 'rgba(255,255,255,' + r.a.toFixed(3) + ')'; hCtx.lineWidth = 1.4; hCtx.stroke(); });
+  }
+  if(reduce){ drawHero(0); }
+  else {
+    hero.addEventListener('pointermove', function(e){
+      if(e.timeStamp - hLastRip < 40) return; hLastRip = e.timeStamp;
+      var b = hCanvas.getBoundingClientRect(); hRip.push({ x:e.clientX - b.left, y:e.clientY - b.top, r:4, a:0.5 }); if(hRip.length > 22) hRip.shift();
+    });
+    if('IntersectionObserver' in window){ new IntersectionObserver(function(es){ hVis = es[0].isIntersecting; }).observe(hero); }
+    (function heroLoop(now){ if(hVis && !document.hidden){ drawHero(now); } requestAnimationFrame(heroLoop); })(0);
+  }
+  window.addEventListener('resize', function(){ hCtx = fit(hCanvas); if(reduce){ drawHero(0); } });
+
+  // ---------- Technology-room diagram: each step lights up the parts it concerns ----------
+  function rigSVG(p){
+    var wave = 'M-14 160' + new Array(13).join(' q14.5 -7 29 0 t29 0') + ' V140 H-14 Z';
+    var pipes = ['M290 300 H 365 V 290 H 392','M448 290 H 475','M529 300 H 545','M560 230 V 92 H 340 V 255 H 290','M599 160 V 92'];
+    var labels = [['tub',160,366,'Vana a trysky'],['pipes',340,72,'Potrubí a spoje'],['control',422,214,'Řídicí jednotka'],['pump',420,338,'Čerpadlo'],['filter',560,172,'Písková filtrace'],['heater',560,338,'Ohřev'],['chem',600,140,'Chemie a ozon']];
+    return '<svg class="rig-svg" viewBox="0 0 640 390" role="img" aria-label="Schéma vířivky a technologické místnosti">' +
+      '<defs><linearGradient id="' + p + 'w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4f6fc"/><stop offset="1" stop-color="#8fd8ef"/></linearGradient>' +
+      '<clipPath id="' + p + 'c"><rect x="44" y="146" width="232" height="182" rx="12"/></clipPath></defs>' +
+      '<line x1="10" y1="342" x2="630" y2="342" class="rig-floor"/>' +
+      '<g class="part" data-part="room"><rect x="360" y="110" width="270" height="232" rx="20" class="rig-room"/><text x="378" y="136" class="rig-room-t">Technologie</text></g>' +
+      '<g class="part" data-part="pipes">' + pipes.map(function(d){ return '<path class="rig-pipe" d="' + d + '"/>'; }).join('') +
+        pipes.map(function(d){ return '<path class="rig-flow" d="' + d + '"/>'; }).join('') +
+        '<circle class="rig-joint" cx="365" cy="300" r="7"/><circle class="rig-joint" cx="340" cy="255" r="7"/><circle class="rig-joint" cx="560" cy="92" r="7"/><circle class="rig-joint" cx="599" cy="92" r="7"/></g>' +
+      '<g class="part" data-part="tub"><rect x="30" y="130" width="260" height="212" rx="22" class="rig-shell"/>' +
+        '<g clip-path="url(#' + p + 'c)"><g class="rig-water"><rect x="44" y="152" width="232" height="200" fill="url(#' + p + 'w)"/><path class="rig-wave" d="' + wave + '" fill="#fff" opacity=".5"/></g></g>' +
+        '<g fill="#fff" stroke="#bdb8b2" stroke-width="1.5"><circle cx="78" cy="300" r="6"/><circle cx="124" cy="300" r="6"/><circle cx="170" cy="300" r="6"/><circle cx="216" cy="300" r="6"/><circle cx="252" cy="300" r="6"/></g>' +
+        '<g class="rig-steam"><path d="M110 120 c-10 -12 10 -20 0 -34"/><path d="M160 120 c-10 -12 10 -20 0 -34"/><path d="M210 120 c-10 -12 10 -20 0 -34"/></g></g>' +
+      '<g class="part" data-part="control"><rect x="380" y="150" width="84" height="44" rx="9" class="rig-screen"/><text class="rig-display" x="422" y="179" text-anchor="middle">38 °C</text></g>' +
+      '<g class="part" data-part="pump"><circle cx="420" cy="290" r="28" class="rig-box"/><g class="rig-impeller"><path d="M420 290 L420 270"/><path d="M420 290 L437 300"/><path d="M420 290 L403 300"/></g></g>' +
+      '<g class="part" data-part="filter"><rect x="475" y="186" width="54" height="134" rx="27" class="rig-box"/><rect x="481" y="256" width="42" height="58" rx="18" fill="#e8d9bd"/></g>' +
+      '<g class="part" data-part="heater"><rect x="545" y="230" width="30" height="90" rx="8" class="rig-box"/><path class="rig-coil" d="M552 242 l16 8 l-16 8 l16 8 l-16 8 l16 8 l-16 8 l16 8 l-16 8"/></g>' +
+      '<g class="part" data-part="chem"><rect x="585" y="160" width="28" height="48" rx="8" class="rig-box"/><rect x="592" y="152" width="14" height="10" rx="3" class="rig-box"/></g>' +
+      labels.map(function(l){
+        var w = Math.round(l[3].length * 9.4 + 28), x = Math.max(8 + w/2, Math.min(632 - w/2, l[1]));
+        return '<g class="rig-label" data-for="' + l[0] + '"><rect x="' + (x - w/2) + '" y="' + (l[2] - 16) + '" width="' + w + '" height="32" rx="16"/><text x="' + x + '" y="' + (l[2] + 6) + '" text-anchor="middle">' + l[3] + '</text></g>';
+      }).join('') +
+      '</svg>';
+  }
+  function Rig(host, stepsEl){
+    host.innerHTML = rigSVG('r' + Math.random().toString(36).slice(2, 8));
+    var svg = host.firstElementChild, parts = svg.querySelectorAll('.part'), labels = svg.querySelectorAll('.rig-label'), disp = svg.querySelector('.rig-display');
+    var steps = [], idx = 0, hold = 0, inView = false, hover = false, card = host.closest('.rig-card') || host;
+    function set(i){
+      idx = i; var s = steps[i];
+      parts.forEach(function(g){ g.classList.toggle('on', s.parts.indexOf(g.dataset.part) > -1); });
+      labels.forEach(function(l){ l.classList.toggle('on', s.labels !== false && s.parts.indexOf(l.dataset.for) > -1); });
+      svg.classList.add('has-active');
+      svg.classList.toggle('flow', !!s.flow); svg.classList.toggle('steam', !!s.steam);
+      svg.classList.toggle('spin', !!s.flow && s.parts.indexOf('pump') > -1);
+      disp.textContent = s.disp || ''; disp.classList.toggle('err', !!s.err);
+      stepsEl.querySelectorAll('.rig-step').forEach(function(b, j){ b.setAttribute('aria-pressed', String(j === i)); });
+    }
+    var heldT = 0;
+    stepsEl.addEventListener('click', function(e){
+      var b = e.target.closest('.rig-step');
+      if(b){
+        set(+b.dataset.i); hold = Date.now() + 9000;
+        stepsEl.classList.add('held'); clearTimeout(heldT); heldT = setTimeout(function(){ stepsEl.classList.remove('held'); }, 9000);
+      }
+    });
+    card.addEventListener('pointerenter', function(){ hover = true; stepsEl.classList.add('paused'); });
+    card.addEventListener('pointerleave', function(){ hover = false; stepsEl.classList.remove('paused'); });
+    if('IntersectionObserver' in window){ new IntersectionObserver(function(es){ inView = es[0].isIntersecting; }).observe(host); }
+    if(!reduce){ setInterval(function(){ if(inView && !hover && Date.now() > hold && steps.length){ set((idx + 1) % steps.length); } }, 2800); }
+    return {
+      load: function(list, cold){
+        steps = list; svg.classList.toggle('cold', !!cold);
+        stepsEl.innerHTML = list.map(function(s, i){
+          return '<li><button type="button" class="rig-step" aria-pressed="false" data-i="' + i + '"><span class="rig-n">' + (i + 1) + '</span><span class="rig-t"><b>' + s.t + '</b></span></button></li>';
+        }).join('');
+        set(0); hold = Date.now() + 2000;
+      }
+    };
+  }
+
+  // ---------- Season tabs: frost (autumn) or open water (spring) behind the section, matching steps in the diagram ----------
+  var season = {
+    podzim: { when:'Ideálně září až listopad', cta:'Objednat zazimování', frost:1, items:[
+      { t:'Vysušíme potrubí', parts:['pipes'], disp:'VYP' },
+      { t:'Ochráníme čerpadla', parts:['pump'], disp:'VYP' },
+      { t:'Ošetříme filtraci', parts:['filter'], disp:'VYP' },
+      { t:'Zkontrolujeme těsnost', parts:['pipes'], disp:'VYP' } ] },
+    jaro: { when:'Ideálně březen až květen', cta:'Objednat odzimování', frost:0, items:[
+      { t:'Napustíme a odvzdušníme', parts:['tub','pipes'], flow:true, disp:'ZAP' },
+      { t:'Spustíme čerpadla a ohřev', parts:['pump','heater'], flow:true, steam:true, disp:'38 °C' },
+      { t:'Zkontrolujeme těsnost', parts:['pipes'], flow:true, disp:'38 °C' },
+      { t:'Nastavíme chemii', parts:['chem'], flow:true, disp:'pH 7,2' } ] }
+  };
+  var seg = document.getElementById('seg'), tabs = seg.querySelectorAll('[role=tab]'), panel = document.getElementById('season-panel');
+  var seasonRig = Rig(document.getElementById('seasonRig'), document.getElementById('seasonSteps'));
+  // The "click a step" hint goes away after the first click.
+  document.getElementById('seasonSteps').addEventListener('click', function(e){ if(e.target.closest('.rig-step')){ document.getElementById('stepsHint').hidden = true; } });
+  // The attention cue (pulsing outline, hint, slider wiggle) ends as soon as someone uses the switch.
+  function stopNudge(){ seg.classList.remove('nudge'); var h = document.querySelector('.seg-hint'); if(h){ h.hidden = true; } }
+  function showSeason(key){
+    var s = season[key];
+    seasonRig.load(s.items, key === 'podzim');
+    document.getElementById('when').textContent = s.when;
+    document.getElementById('seasonCtaT').textContent = s.cta;
+    frostTarget = s.frost; if(reduce){ frost = frostTarget; }
+    tabs.forEach(function(t, i){
+      var on = t.dataset.key === key; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1;
+      if(on){ seg.dataset.pos = String(i); panel.setAttribute('aria-labelledby', t.id); }
+    });
+  }
+  tabs.forEach(function(t, i){
+    t.addEventListener('click', function(){ stopNudge(); showSeason(t.dataset.key); });
+    t.addEventListener('keydown', function(e){
+      if(e.key === 'ArrowRight' || e.key === 'ArrowLeft'){ var n = tabs[(i+1)%2]; stopNudge(); showSeason(n.dataset.key); n.focus(); e.preventDefault(); }
+    });
+  });
+  showSeason(new Date().getMonth() >= 7 ? 'podzim' : 'jaro');
+  frost = frostTarget;
+
+  // ---------- Service area map (real coordinates, base in Velké Přílepy) ----------
+  var MAP = { lon0:13.65, lat0:50.48, kx:71.5, ky:111.2, S:6.584 };
+  // Pricing uses road distance (straight line x 1.3), so the 25 km ring is drawn at its straight-line equivalent.
+  var ROAD_FACTOR = 1.3, RING_KM = RATE.freeKm / ROAD_FACTOR;
+  function proj(lat, lon){ return [ (lon - MAP.lon0)*MAP.kx*MAP.S, (MAP.lat0 - lat)*MAP.ky*MAP.S ]; }
+  function unproj(x, y){ return [ MAP.lat0 - y/MAP.S/MAP.ky, MAP.lon0 + x/MAP.S/MAP.kx ]; }
+  function haversine(a, b){
+    var R = 6371, dLat = (b[0]-a[0])*Math.PI/180, dLon = (b[1]-a[1])*Math.PI/180;
+    var h = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(a[0]*Math.PI/180)*Math.cos(b[0]*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+    return 2*R*Math.asin(Math.sqrt(h));
+  }
+  var BASE = [50.160, 14.316];
+  var towns = [
+    ['Praha','Praha',50.0755,14.4378,'r'], ['Kladno','Kladno',50.147,14.103,'l'], ['Slaný','Slaný',50.230,14.087,'l'],
+    ['Kralupy nad Vltavou','Kralupy',50.241,14.311,'l'], ['Mělník','Mělník',50.350,14.474,'r'], ['Neratovice','Neratovice',50.259,14.517,'r'],
+    ['Brandýs nad Labem','Brandýs',50.187,14.663,'r'], ['Říčany','Říčany',49.992,14.654,'r'], ['Černošice','Černošice',49.960,14.320,'r'],
+    ['Beroun','Beroun',49.964,14.072,'l'], ['Rakovník','Rakovník',50.104,13.733,'r'], ['Příbram','Příbram',49.690,14.010,'r'],
+    ['Benešov','Benešov',49.782,14.687,'r'], ['Mladá Boleslav','Mladá Boleslav',50.411,14.903,'r'], ['Nymburk','Nymburk',50.186,15.042,'r'],
+    ['Kolín','Kolín',50.028,15.200,'l'], ['Kutná Hora','Kutná Hora',49.948,15.268,'l']
+  ];
+  var rivers = [
+    ['Vltava',[[49.80,14.39],[49.85,14.405],[49.89,14.40],[49.97,14.39],[50.03,14.41],[50.08,14.41],[50.12,14.43],[50.16,14.40],[50.18,14.36],[50.24,14.31],[50.27,14.33],[50.31,14.40],[50.345,14.465]], 1],
+    ['Labe',[[49.99,15.36],[50.03,15.20],[50.14,15.12],[50.186,15.04],[50.20,14.93],[50.16,14.75],[50.19,14.66],[50.23,14.58],[50.30,14.50],[50.345,14.465],[50.40,14.40],[50.49,14.33]], 4],
+    ['Berounka',[[50.06,13.80],[50.02,13.92],[49.964,14.072],[49.92,14.24],[49.95,14.34],[49.97,14.39]], 2]
+  ];
+  var praha = [[50.155,14.38],[50.16,14.47],[50.14,14.56],[50.10,14.66],[50.05,14.70],[49.99,14.64],[49.95,14.56],[49.95,14.42],[49.98,14.33],[50.03,14.27],[50.09,14.23],[50.13,14.29]];
+  var mapSvg = document.getElementById('mapSvg'), NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent){ var e = document.createElementNS(NS, tag); for(var k in attrs){ e.setAttribute(k, attrs[k]); } (parent || mapSvg).appendChild(e); return e; }
+  function pathOf(pts, close){ return pts.map(function(p, i){ var q = proj(p[0], p[1]); return (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1); }).join(' ') + (close ? ' Z' : ''); }
+  var b = proj(BASE[0], BASE[1]), kmPx = MAP.S;
+  [50, 75].forEach(function(d){
+    el('circle', { cx:b[0], cy:b[1], r:d*kmPx, 'class':'m-ring' });
+    if(b[1] + d*kmPx < 620){ var t = el('text', { x:b[0], y:b[1] + d*kmPx - 10, 'text-anchor':'middle', 'class':'m-ring-t' }); t.textContent = d + ' km vzdušnou čarou'; }
+  });
+  el('path', { d:pathOf(praha, true), 'class':'m-praha' });
+  rivers.forEach(function(r){
+    el('path', { d:pathOf(r[1]), 'class':'m-river' });
+    var p = proj(r[1][r[2]][0], r[1][r[2]][1]), t = el('text', { x:p[0] + 10, y:p[1] + 24, 'class':'m-river-t' }); t.textContent = r[0];
+  });
+  el('circle', { cx:b[0], cy:b[1], r:RING_KM*kmPx, 'class':'m-inner' });
+  var t25 = el('text', { x:b[0] - 0.72*RING_KM*kmPx - 8, y:b[1] + 0.72*RING_KM*kmPx + 12, 'text-anchor':'end', 'class':'m-ring-t' }); t25.textContent = 'paušál';
+  var lineEl = el('path', { 'class':'m-line', d:'' });
+  var townEls = towns.map(function(tw){
+    var p = proj(tw[2], tw[3]), g = el('g', { 'class':'m-town', tabindex:'0', role:'button', 'aria-label':tw[0] });
+    el('circle', { cx:p[0], cy:p[1], r:6 }, g);
+    var tx = el('text', { x:p[0] + (tw[4] === 'l' ? -12 : 12), y:p[1] + 5, 'text-anchor':tw[4] === 'l' ? 'end' : 'start' }, g); tx.textContent = tw[1];
+    g.addEventListener('click', function(e){ e.stopPropagation(); selectPlace(tw[0], tw[2], tw[3], g); });
+    g.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); selectPlace(tw[0], tw[2], tw[3], g); } });
+    return g;
+  });
+  var baseG = el('g', { 'class':'m-base' });
+  [0,1,2].forEach(function(){ el('circle', { cx:b[0], cy:b[1], r:RING_KM*kmPx, 'class':'m-ripple' }, baseG); });
+  el('circle', { cx:b[0], cy:b[1], r:9, 'class':'core' }, baseG);
+  var bt = el('text', { x:b[0], y:b[1] - 18, 'text-anchor':'middle' }, baseG); bt.textContent = 'Velké Přílepy';
+  var pinG = el('g', { 'class':'m-pin' }); pinG.style.display = 'none'; var pinC = el('circle', { r:8 }, pinG);
+  var distG = el('g', { 'class':'m-dist' }), distR = el('rect', { rx:16, height:32 }, distG), distT = el('text', { 'text-anchor':'middle' }, distG);
+  document.getElementById('townList').innerHTML = towns.map(function(t){ return '<option value="' + t[0] + '"></option>'; }).join('');
+
+  var place = null;
+  function selectPlace(name, lat, lon, g){
+    var road = Math.max(1, Math.round(haversine(BASE, [lat, lon])*ROAD_FACTOR));
+    place = { name:name, road:road };
+    townEls.forEach(function(t){ t.classList.toggle('sel', t === g); });
+    var p = proj(lat, lon);
+    pinG.style.display = g ? 'none' : ''; pinC.setAttribute('cx', p[0]); pinC.setAttribute('cy', p[1]);
+    lineEl.setAttribute('d', 'M' + b[0] + ' ' + b[1] + ' L' + p[0].toFixed(1) + ' ' + p[1].toFixed(1));
+    var mx = (b[0] + p[0])/2, my = (b[1] + p[1])/2, label = 'cca ' + road + ' km', w = label.length*9 + 26;
+    distR.setAttribute('x', mx - w/2); distR.setAttribute('y', my - 16); distR.setAttribute('width', w);
+    distT.setAttribute('x', mx); distT.setAttribute('y', my + 6); distT.textContent = label;
+    distG.style.display = road < 4 ? 'none' : '';
+    refreshArea();
+  }
+  function refreshArea(){
+    if(!place) return;
+    var extra = Math.max(0, place.road - RATE.freeKm), inZone = extra === 0;
+    document.getElementById('rTown').textContent = place.name;
+    document.getElementById('rMeta').textContent = 'cca ' + place.road + ' km cesty (odhad)';
+    document.getElementById('rPrice').textContent = money(RATE.trip + extra*RATE.km);
+    document.getElementById('rNote').textContent = 'výjezd, ' + (withVat ? 'včetně DPH' : 'bez DPH');
+    var chip = document.getElementById('rChip');
+    chip.textContent = inZone ? 'V paušálu' : '+' + extra + ' km navíc'; chip.classList.toggle('out', !inZone);
+  }
+  mapSvg.addEventListener('click', function(e){
+    var pt = mapSvg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+    var sp = pt.matrixTransform(mapSvg.getScreenCTM().inverse()), ll = unproj(sp.x, sp.y), near = null, best = 4;
+    towns.forEach(function(t, i){ var d = haversine([t[2], t[3]], ll); if(d < best){ best = d; near = i; } });
+    if(near !== null){ var t = towns[near]; selectPlace(t[0], t[2], t[3], townEls[near]); }
+    else { selectPlace('Vybrané místo', ll[0], ll[1], null); }
+  });
+  function norm(s){ return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim(); }
+  var townInput = document.getElementById('town');
+  townInput.addEventListener('change', function(){
+    var q = norm(townInput.value); if(!q) return;
+    var i = towns.findIndex(function(t){ return norm(t[0]) === q || norm(t[1]) === q; });
+    if(i < 0){ i = towns.findIndex(function(t){ return norm(t[0]).indexOf(q) === 0; }); }
+    if(i > -1){ selectPlace(towns[i][0], towns[i][2], towns[i][3], townEls[i]); }
+    else { document.getElementById('rTown').textContent = townInput.value; document.getElementById('rMeta').textContent = 'Obec v seznamu nemáme, klikněte na její místo v mapě.'; }
+  });
+  document.getElementById('rCalc').addEventListener('click', function(){
+    if(!place) return; km.value = String(Math.max(5, Math.min(120, Math.round(place.road/5)*5))); km.dispatchEvent(new Event('input'));
+  });
+  document.getElementById('rAsk').addEventListener('click', function(){
+    var msg = document.getElementById('f-msg'); if(place && !msg.value.trim()){ msg.value = 'Obec: ' + place.name + '. '; }
+  });
+  selectPlace('Praha', 50.0755, 14.4378, townEls[0]);
+
+  // ---------- Gallery ----------
+  var works = [
+    ['bazen','IMG_3514','Bazén s přelivem'],
+    ['virivka','IMG_0788','Obložená vířivka'],
+    ['bazen','IMG_2032','Krytý bazén'],
+    ['virivka','IMG_3042','Vířivka ve wellness'],
+    ['bazen','IMG_7690','Venkovní bazén'],
+    ['virivka','IMG_3180','Plavecká vířivka'],
+    ['bazen','IMG_2165','Tvarový bazén'],
+    ['virivka','IMG_0668','Rohová vířivá vana'],
+    ['technika','IMG_10982','Strojovna bazénu'],
+    ['bazen','IMG_6460','Bazén se žebříkem'],
+    ['virivka','IMG_7226-1','Vířivka v interiéru'],
+    ['technika','IMG_10822','Rozvody trysek'],
+    ['stavba','IMG_3630','Stavba bazénu'],
+    ['bazen','IMG_0417','Zahradní bazén'],
+    ['virivka','IMG_1597','Servis vířivky'],
+    ['bazen','IMG_7144','Napuštěný bazén'],
+    ['stavba','IMG_4358-1','Výkop a základy'],
+    ['technika','IMG_11113','Oprava trysek'],
+    ['bazen','IMG_6864','Bazén na terase'],
+    ['technika','IMG_7201','Výměna technologie']
+  ];
+  var CAT = { bazen:'Bazén', virivka:'Vířivka', technika:'Technologie', stavba:'Stavba' };
+  var INITIAL = 13, filter = 'vse', expanded = false, shown = [];
+  var tilesEl = document.getElementById('tiles'), moreBtn = document.getElementById('more');
+  tilesEl.innerHTML = works.map(function(w, i){
+    return '<button type="button" class="tile ph' + (i === 0 ? ' big' : '') + '" data-c="' + w[0] + '" data-i="' + i + '" aria-label="Zvětšit: ' + w[2] + '">' +
+      '<img class="bw" src="img/t-' + w[1] + '.jpg" alt="" loading="' + (i < 4 ? 'eager' : 'lazy') + '" decoding="async" width="900" height="675">' +
+      '<span class="tile-cap"><span>' + w[2] + '</span><i>' + CAT[w[0]] + '</i></span></button>';
+  }).join('');
+  var tileEls = tilesEl.querySelectorAll('.tile');
+  function layoutTiles(){
+    var n = 0; shown = [];
+    tileEls.forEach(function(t){
+      var match = filter === 'vse' || t.dataset.c === filter;
+      var hide = !match || (filter === 'vse' && !expanded && n >= INITIAL);
+      t.hidden = hide; if(match) n++; if(!hide) shown.push(+t.dataset.i);
+    });
+    moreBtn.hidden = !(filter === 'vse' && !expanded);
+    tileEls[0].classList.toggle('big', filter === 'vse');
+  }
+  layoutTiles();
+  moreBtn.addEventListener('click', function(){ expanded = true; layoutTiles(); tileEls[INITIAL].focus(); });
+  document.querySelectorAll('.filters button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.filters button').forEach(function(x){ x.setAttribute('aria-pressed', String(x === btn)); });
+      filter = btn.dataset.f; layoutTiles();
+    });
+  });
+
+  // ---------- Lightbox (full colour) ----------
+  var lb = document.getElementById('lb'), lbImg = document.getElementById('lbImg'), lbCap = document.getElementById('lbCap'), lbAt = 0;
+  function lbShow(k){
+    lbAt = (k + shown.length) % shown.length;
+    var w = works[shown[lbAt]];
+    lbImg.src = 'img/' + w[1] + '.jpg'; lbImg.alt = w[2]; lbCap.textContent = w[2];
+  }
+  tileEls.forEach(function(t){
+    t.addEventListener('click', function(){
+      lbShow(shown.indexOf(+t.dataset.i));
+      if(typeof lb.showModal === 'function'){ lb.showModal(); } else { lb.setAttribute('open',''); }
+    });
+  });
+  function lbClose(){ if(lb.close){ lb.close(); } else { lb.removeAttribute('open'); } }
+  document.getElementById('lbPrev').addEventListener('click', function(){ lbShow(lbAt - 1); });
+  document.getElementById('lbNext').addEventListener('click', function(){ lbShow(lbAt + 1); });
+  document.getElementById('lbClose').addEventListener('click', lbClose);
+  lb.addEventListener('click', function(e){ if(e.target === lb) lbClose(); });
+  lb.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight'){ lbShow(lbAt + 1); e.preventDefault(); }
+    if(e.key === 'ArrowLeft'){ lbShow(lbAt - 1); e.preventDefault(); }
+  });
+  var lbX = null;
+  lbImg.addEventListener('pointerdown', function(e){ lbX = e.clientX; });
+  lbImg.addEventListener('pointerup', function(e){ if(lbX === null) return; var d = e.clientX - lbX; lbX = null; if(Math.abs(d) > 40) lbShow(lbAt + (d < 0 ? 1 : -1)); });
+
+  // ---------- Preselect service from CTA ----------
+  document.querySelectorAll('[data-service]').forEach(function(a){
+    a.addEventListener('click', function(){ document.getElementById('f-type').value = a.dataset.service; });
+  });
+
+  // ---------- Copy ----------
+  document.querySelectorAll('.copy').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var txt = btn.dataset.copy, label = btn.textContent;
+      function ok(){ btn.textContent = 'Zkopírováno'; setTimeout(function(){ btn.textContent = label; }, 1600); }
+      function fallback(){ var s = window.getSelection(), r = document.createRange(); r.selectNodeContents(btn.previousElementSibling); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Označeno, Ctrl+C'; setTimeout(function(){ btn.textContent = label; }, 2400); }
+      try{ navigator.clipboard.writeText(txt).then(ok, fallback); }catch(e){ fallback(); }
+    });
+  });
+
+  // ---------- Form: validates inline, then opens the visitor's mail app with the enquiry filled in ----------
+  // No server endpoint yet, so the enquiry goes out by e-mail.
+  var form = document.getElementById('form'), phone = document.getElementById('f-phone'), perr = document.getElementById('phone-err');
+  var consent = document.getElementById('f-consent'), done = document.getElementById('done');
+  function checkPhone(){ var okp = phone.value.replace(/\D/g,'').length >= 9; phone.setAttribute('aria-invalid', String(!okp)); perr.hidden = okp; return okp; }
+  phone.addEventListener('blur', function(){ if(phone.value) checkPhone(); });
+  phone.addEventListener('input', function(){ if(phone.getAttribute('aria-invalid') === 'true') checkPhone(); });
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(!checkPhone()){ phone.focus(); return; }
+    if(!consent.checked){ consent.focus(); done.hidden = false; done.textContent = 'Potvrďte prosím souhlas se zpracováním údajů.'; return; }
+    var f = new FormData(form);
+    var body = 'Jméno: ' + (f.get('name') || '-') + '\nTelefon: ' + f.get('tel') + '\nCo potřebujete: ' + f.get('service') + '\n\nPopis:\n' + (f.get('message') || '-');
+    location.href = 'mailto:info@servisvirivychvan.cz?subject=' + encodeURIComponent('Poptávka: ' + f.get('service')) + '&body=' + encodeURIComponent(body);
+    done.hidden = false;
+    done.textContent = 'Otevřeli jsme e-mail s vaší poptávkou. Pokud se nic neotevřelo, zavolejte na 777 267 377.';
+  });
+})();
+</script>
+
+</body>
+</html>
